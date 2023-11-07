@@ -6,65 +6,100 @@ hide circle
 ' avoid problems with angled crows feet
 skinparam linetype ortho
 
-entity "Channel" as chan{
+
+entity "Channels" as chan{
     *チャンネルID : integer <<generated>>
     --
     *チャンネル名 : varchar (100)
+    *チャンネル概要 :
+}
+entity "Channels-Slots" as chan_slo{
+    *チャンネルID : integer 
+    --
+    *番組枠ID
+}
+entity "Slots" as slo{
+    *番組枠ID : integer <<generated>>
+    --
+    *日時 番組開始時刻 : datetime
+    *日時 番組終了時刻 : datetime
+
+    *番組ID
 }
 entity "Programs" as pro{
     *番組ID : integer <<generated>>
     --
     *番組名 : date
-    *番組カテゴリID : integer
+    *総シーズン数 : integer
+    *総エピソード数 : integer
     *番組詳細 : integer
-    *放送チャンネルID : integer
-    *放送開始時間
-    *放送終了時間
     *番組再生数
 
-    *コンテンツID
-    *シーズンID
     *エピソードID
 }
-entity "Contents" as con {
-    *コンテンツID : integer <<generated>>
-    --
-    *コンテンツ名 : varchar (100)
-    *総エピソード数
-    *総シーズン数
-    *作品詳細
-}
-entity "Program_Categories" as pc {
-    *番組カテゴリID : integer <<generated>>
-    --
-    *番組カテゴリ名 : varchar (100)
-}
-entity "Seasons" as se {
-    *シーズンID : integer <<generated>>
-    --
-    *シーズン名 : varchar (100)
-    *総エピソード数
-}
-
-entity "Episodes" as ep {
+entity "Episodes" as epi{
     *エピソードID : integer <<generated>>
     --
-    *コンテンツID
-    *シーズンID
-    *エピソード数 : varchar (100)
-    *エピソード名
-    *エピソード詳細
-    *動画時間
-    *公開日
-    *エピソード再生数
+    *エピソード名 : date
+    *エピソード番号 : varchar
+    *エピソード詳細 : integer
+    *シーズン名 : varchar
+    *番組再生数 : integer
+    *動画時間 : time
+    *公開日 : date
+    *視聴回数 integer
 
-    *放送番組ID
 }
 
-chan}|--||pro
-ep||--|{con
-pro||--|{ep
-ep||--|{se
-pro||--|{pc
+
+
+entity "Programs-Genres" as pro_gen{
+    *番組ID : integer
+    --
+    *ジャンルID
+}
+
+entity "Genres" as gen{
+    *ジャンルID: integer <<generated>>
+    --
+    *ジャンル名
+}
+
+' ER
+
+chan||--|{chan_slo
+chan_slo}|--||slo
+slo}|--||pro
+pro}|--||epi
+pro||--|{pro_gen
+pro_gen}|--||gen
+
 @enduml
 
+' entity "Art" as art {
+'     *作品ID : integer <<generated>>
+'     --
+'     *作品名 : varchar (100)
+'     *総エピソード数
+'     *総シーズン数
+'     *総エピソード数
+'     *作品詳細
+' }
+' entity "Program_Categories" as pc {
+'     *番組カテゴリID : integer <<generated>>
+'     --
+'     *番組カテゴリ名 : varchar (100)
+' }
+
+' entity "Contents" as con {
+'     *コンテンツID <<generated>>
+'     --
+'     *エピソード数 : varchar (100)
+'     *エピソード名
+'     *エピソード詳細
+'     *シーズン名
+'     *動画時間
+'     *公開日
+
+'     *放送番組ID
+' }
