@@ -1,4 +1,4 @@
-@startuml internetTV
+@startuml NeoInternetTV
 
 ' hide the spot
 hide circle
@@ -7,26 +7,28 @@ hide circle
 skinparam linetype ortho
 
 
-entity "Channels" as chan{
+entity "channels" as chan{
     *チャンネルID : integer <<generated>>
     --
     *チャンネル名 : varchar (100)
     *チャンネル概要 :
 }
-entity "Channels_Slots" as chan_slo{
-    *チャンネルID : integer 
+entity "channels_slots" as chan_slo{
+    *チャンネルID : integer
     --
-    *番組枠ID
+    *番組枠ID【FK】
 }
-entity "Slots" as slo{
+entity "slots" as slo{
     *番組枠ID : integer <<generated>>
     --
-    *日時 番組開始時刻 : datetime
-    *日時 番組終了時刻 : datetime
+    *日時_番組開始時刻 : datetime
+    *日時_番組終了時刻 : datetime
+    *番組枠再生数
 
-    *番組ID
+    *番組ID【FK】
+    *エピソードID【FK】
 }
-entity "Programs" as pro{
+entity "programs" as pro{
     *番組ID : integer <<generated>>
     --
     *番組名 : integer
@@ -34,10 +36,9 @@ entity "Programs" as pro{
     *総エピソード数 : integer
     *番組詳細 : integer
     *番組再生数
-
-    *エピソードID
 }
-entity "Episodes" as epi{
+
+entity "episodes" as epi{
     *エピソードID : integer <<generated>>
     --
     *エピソード名 : date
@@ -46,18 +47,20 @@ entity "Episodes" as epi{
     *シーズン名 : varchar
     *動画時間 : time
     *公開日 : date
-    *視聴回数 integer
+    *エピソード再生数 integer
+
+    *番組ID【FK】
 }
 
 
 
-entity "Programs-Genres" as pro_gen{
-    *番組ID : integer
+entity "programs-genres" as pro_gen{
+    *番組ID : integer【FK】
     --
-    *ジャンルID
+    *ジャンルID【FK】
 }
 
-entity "Genres" as gen{
+entity "genres" as gen{
     *ジャンルID: integer <<generated>>
     --
     *ジャンル名
@@ -67,8 +70,9 @@ entity "Genres" as gen{
 
 chan||--|{chan_slo
 chan_slo}|--||slo
+slo}|--||epi
+pro||--|{epi
 slo}|--||pro
-pro}|--||epi
 pro||--|{pro_gen
 pro_gen}|--||gen
 
