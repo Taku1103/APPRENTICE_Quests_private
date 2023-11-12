@@ -11,59 +11,59 @@ entity "channels" as chan{
     *チャンネルID : integer <<generated>>
     --
     *チャンネル名 : varchar (100)
-    *チャンネル概要 :
+    *チャンネル概要 : text
 }
 entity "channels_slots" as chan_slo{
     *チャンネルID : integer
     --
-    *番組枠ID【FK】
+    *番組枠ID【FK】: integer
 }
 entity "slots" as slo{
     *番組枠ID : integer <<generated>>
     --
     *日時_番組開始時刻 : datetime
     *日時_番組終了時刻 : datetime
-    *番組枠再生数
+    *番組枠再生数 : integer
 
-    *番組ID【FK】
-    *エピソードID【FK】
+    *番組ID【FK】: integer
+    *エピソードID【FK】: integer
 }
 entity "programs" as pro{
     *番組ID : integer <<generated>>
     --
-    *番組名 : integer
+    *番組名 : integer(255)
     *総シーズン数 : integer
     *総エピソード数 : integer
     *番組詳細 : integer
-    *番組再生数
+    *番組再生数 : integer
 }
 
 entity "episodes" as epi{
     *エピソードID : integer <<generated>>
     --
     *エピソード名 : date
-    *エピソード番号 : varchar
+    *エピソード番号 : varchar(50)
     *エピソード詳細 : integer
-    *シーズン名 : varchar
+    *シーズン名 : varchar(255)
     *動画時間 : time
     *公開日 : date
     *エピソード再生数 integer
 
-    *番組ID【FK】
+    *番組ID【FK】: integer
 }
 
 
 
 entity "programs-genres" as pro_gen{
-    *番組ID : integer【FK】
+    *番組ID 【FK】: integer
     --
-    *ジャンルID【FK】
+    *ジャンルID【FK】: integer
 }
 
 entity "genres" as gen{
     *ジャンルID: integer <<generated>>
     --
-    *ジャンル名
+    *ジャンル名 : varchar(100)
 }
 
 ' ER
@@ -77,31 +77,3 @@ pro||--|{pro_gen
 pro_gen}|--||gen
 
 @enduml
-
-' entity "Art" as art {
-'     *作品ID : integer <<generated>>
-'     --
-'     *作品名 : varchar (100)
-'     *総エピソード数
-'     *総シーズン数
-'     *総エピソード数
-'     *作品詳細
-' }
-' entity "Program_Categories" as pc {
-'     *番組カテゴリID : integer <<generated>>
-'     --
-'     *番組カテゴリ名 : varchar (100)
-' }
-
-' entity "Contents" as con {
-'     *コンテンツID <<generated>>
-'     --
-'     *エピソード数 : varchar (100)
-'     *エピソード名
-'     *エピソード詳細
-'     *シーズン名
-'     *動画時間
-'     *公開日
-
-'     *放送番組ID
-' }
