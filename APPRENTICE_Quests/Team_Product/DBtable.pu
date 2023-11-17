@@ -1,0 +1,79 @@
+@startuml shortcut_quiz
+
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+
+entity "Shortcut" as sho{
+    *shortcut_id <generated> : INT
+    --
+    *shortcut_command	: VARCHAR(50)
+    *description : TEXT
+    *shortcut_genre_id <FK>
+}
+
+
+entity "Quiz" as quiz{
+    *quiz_id <generated> INT
+    --
+    *question TEXT
+    *question_png_pass TEXT
+    *question_ans_gif_pass TEXT
+    *options JSON or TEXT
+    *explanation TEXT
+    *question_level INT
+    *(correct_)shortcut_id <FK> INT
+    *question_genre_id <FK> INT
+}
+
+' entity "question_genre" as qg{
+'     *quiz_id <FK>: INT
+'     --
+'     *question_genre_name : INT
+' }
+' entity "recommend_shortcut_ranking" as rsr{
+'     *quiz_id : INT
+'     *shortcut_id : INT
+'     --
+'     *recommend_shortcut_ranking :INT
+'     *min_hand : INT
+' }
+
+entity "quiz-short" as qs{
+    *quiz_id <FK> : INT
+    --
+    *shortcut_id <FK> : INT
+}
+entity "shortcut_genre" as sg{
+    *shortcut_genre_id <generated> : INT
+    --
+    *short_genre_name : INT
+}
+
+
+' quiz||--|{qg
+' quiz||--|{rsr
+' rsr}|--||sho
+sho}|--||sg
+qs}|--||quiz
+sho||--|{qs
+
+@enduml
+
+Shortcut テーブル:
+
+ショートカットに関する情報を格納するテーブルです。
+列名	データ型	説明
+
+
+クイズに関する情報を格納するテーブルです。
+列名	データ型	説明
+quiz_id	INT	クイズID (プライマリキー)
+question	TEXT	クイズの問題文
+
+options	JSON or TEXT	クイズの選択肢 (JSON形式やTEXT形式)
+correct_option	VARCHAR(50)	正解の選択肢
+explanation	TEXT	正解の解説説明
