@@ -7,9 +7,10 @@ require_relative 'player'
 require_relative 'cpu'
 require_relative 'deck'
 
-
 # 実行部(メインファイルなら以下実行)-----------------------------------------------------------------------
 if __FILE__ == $PROGRAM_NAME
+  # チップの空枚数 5以下(最小bet10以上)
+  CHIPS_EMPTY = 5
   # インスタンス化
   bj_game = Game.new('BJ_game')
   deck_obj = Deck.new('BJ_deck')
@@ -30,7 +31,7 @@ if __FILE__ == $PROGRAM_NAME
     cpu_obj_arr.each(&:loop_init)
 
     # デッキ配列生成
-    bj_deck = deck_obj.deck_making
+    deck_obj.deck_making
 
     # debug
     player.show_chips
@@ -39,9 +40,9 @@ if __FILE__ == $PROGRAM_NAME
 
     # 初期の2枚手札配り(引数:デッキ,参加者obj)
     2.times do
-      deck_obj.dealing(bj_deck, player)
-      deck_obj.dealing(bj_deck, dealer)
-      cpu_obj_arr.each { |cpu| deck_obj.dealing(bj_deck, cpu) }
+      deck_obj.dealing(player)
+      deck_obj.dealing(dealer)
+      cpu_obj_arr.each { |cpu| deck_obj.dealing(cpu) }
     end
 
     # 点数計算
@@ -55,9 +56,9 @@ if __FILE__ == $PROGRAM_NAME
     player.show_score
 
     # ドロー
-    player.player_draw(deck_obj, bj_deck) # 入力部
-    dealer.dealer_draw(deck_obj, bj_deck)
-    cpu_obj_arr.each { |cpu| cpu.cpu_draw(deck_obj, bj_deck) }
+    player.player_draw(deck_obj) # 入力部
+    dealer.dealer_draw(deck_obj)
+    cpu_obj_arr.each { |cpu| cpu.cpu_draw(deck_obj) }
 
     # CPU勝敗判定
     dealer.show_score
@@ -76,7 +77,7 @@ if __FILE__ == $PROGRAM_NAME
     player.return_chips
 
     # プレイヤーのチップ有無でbreak
-    if player.chips <= 0
+    if player.chips <= CHIPS_EMPTY
       player.chips_empty_log
       break
     end

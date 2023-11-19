@@ -1,12 +1,10 @@
-# require_relative 'bj_player'
-
 class Dealer < BJ_player
   # ドローメソッド（17以上までドロー）
-  def dealer_draw(deck_obj, deck)
+  def dealer_draw(deck_obj)
     show_hand
     show_score
     while @score < AUTO_DRAW_LIMIT_SCORE
-      deck_obj.dealing(deck, self)
+      deck_obj.dealing(self)
       calculate
       show_latest_draw
       show_score
