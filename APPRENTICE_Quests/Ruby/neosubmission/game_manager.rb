@@ -1,4 +1,4 @@
-class Game
+class GameManager
   attr_accessor :name, :number_of_cpu
 
   def initialize(name)

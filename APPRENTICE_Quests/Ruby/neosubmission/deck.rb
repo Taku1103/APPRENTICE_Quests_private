@@ -1,5 +1,5 @@
 class Deck
-  attr_accessor :name, :used_cards
+  attr_accessor :name, :used_cards, :deck_arr
 
   def initialize(name)
     @name = name
@@ -26,7 +26,7 @@ class Deck
   end
 
   # デッキからランダムカード排出メソッド（被り無し）
-  def select_card()
+  def select_card
     available_cards = @deck_arr - @used_cards   # 配列の差分
     selected_card = available_cards.sample # ランダム1枚
     @used_cards << selected_card           # 使用したカードを記録

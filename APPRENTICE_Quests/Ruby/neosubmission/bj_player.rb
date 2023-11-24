@@ -3,7 +3,7 @@ class BJ_player
   AUTO_DRAW_LIMIT_SCORE = 17
   DEFAULT_CHIPS = 1000
 
-  attr_accessor :name, :hand, :score, :chips, :bets, :is_bust, :is_bj, :win_lose_draw_status, :action_status
+  attr_accessor :name, :chips, :hand, :score, :bets, :is_bust, :is_bj, :win_lose_draw_status, :action_status
 
   def initialize(name)
     # ループしても変更を保持

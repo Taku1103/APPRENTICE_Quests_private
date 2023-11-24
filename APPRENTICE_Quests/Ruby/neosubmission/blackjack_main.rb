@@ -1,29 +1,30 @@
 # frozen_string_literal: true
 
-require_relative 'game'
+require_relative 'game_manager'
 require_relative 'bj_player'
+require_relative 'deck'
 require_relative 'dealer'
 require_relative 'player'
 require_relative 'cpu'
-require_relative 'deck'
 
 # 実行部(メインファイルなら以下実行)-----------------------------------------------------------------------
 if __FILE__ == $PROGRAM_NAME
   # チップの空枚数 5以下(最小bet10以上)
   CHIPS_EMPTY = 5
   # インスタンス化
-  bj_game = Game.new('BJ_game')
+  bj_game_manager = GameManager.new('BJ_game_manager')
   deck_obj = Deck.new('BJ_deck')
   player = Player.new('Player')
   dealer = Dealer.new('Dealer')
   # CPUを入力の数だけインスタンス化しオブジェクトをcpu_obj_arr配列に格納
   cpu_obj_arr = []
-  bj_game.asking_cpu_num
-  bj_game.number_of_cpu.times { |i| cpu_obj_arr << CPU.new("CPU_#{i + 1}") }
+  bj_game_manager.asking_cpu_num
+  bj_game_manager.number_of_cpu.times { |i| cpu_obj_arr << CPU.new("CPU_#{i + 1}") }
 
   # MainLoop_start-----------------------------------------------------------------------
   loop do
-    bj_game.start_log
+    bj_game_manager.start_log
+
     # インスタンス変数一部 ループ開始時初期化
     deck_obj.loop_init
     player.loop_init
@@ -35,7 +36,7 @@ if __FILE__ == $PROGRAM_NAME
 
     # debug
     player.show_chips
-    bj_game.asking_bet_values(player)
+    bj_game_manager.asking_bet_values(player)
     player.show_bets
 
     # 初期の2枚手札配り(引数:デッキ,参加者obj)
@@ -65,13 +66,13 @@ if __FILE__ == $PROGRAM_NAME
     cpu_obj_arr.each do |cpu|
       cpu.show_hand
       cpu.show_score
-      bj_game.win_or_lose(cpu, dealer)
+      bj_game_manager.win_or_lose(cpu, dealer)
     end
     # プレイヤー勝敗判定
     dealer.show_score
     player.show_hand
     player.show_score
-    bj_game.win_or_lose(player, dealer)
+    bj_game_manager.win_or_lose(player, dealer)
 
     # チップ支払い
     player.return_chips
@@ -85,6 +86,6 @@ if __FILE__ == $PROGRAM_NAME
   # MainLoop_end-----------------------------------------------------------------------
 
   # BJ終了
-  bj_game.end_log
+  bj_game_manager.end_log
   exit
 end
