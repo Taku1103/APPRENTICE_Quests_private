@@ -1,4 +1,18 @@
-Railsチュートリアルでまずyieldと出会うのはapplication.html.erbの中
+# はじめに
+Railsチュートリアルを進めているとview/layouts/application.html.erbの中で見かけたyieldというメソッドと部分的に描画するrenderという似たようなメソッドが目につき、これどういう違いなのかと疑問に思ったので記事にしてました。
+
+
+# そもそもapplication.html.erbって？
+Railsのビューは
+- application.html.erb → HTMLやHEADタグなどの共通レイアウト
+- アクション名.html.erb → BODYタグ内の個別レイアウト
+
+この二つで役割分担して画面表示している。
+
+application.erbはコントローラ固有のレイアウトが見つからない場合、**デフォルトで使用される共通レイアウト。**
+
+全てのページで使われるhead、ヘッダー、フッターなどをここで一括して書くことで個別レイアウト内で同じコードを書く必要がなくなり、DRYが保たれる。
+[(コントローラーでレイアウトを指定するにはlayoutメソッドを使う)](https://pikawaka.com/rails/layout)
 
 ```erb:application.html.erb
 <!DOCTYPE html>
@@ -13,35 +27,47 @@ Railsチュートリアルでまずyieldと出会うのはapplication.html.erb�
   </head>
 
   <body>
-    <%= yield %> # ←ここ！
+    <%= yield %> 
   </body>
 </html>
 ```
 
-# そもそもapplication.erbとは？
-Railsのビューは、共通部分になるレイアウトテンプレート(単にレイアウト)と、各ページ固有のコンテンツを表す個別テンプレートの二種類がある
-application.erbはコントローラ固有のレイアウトが見つからない場合、**デフォルトで使用される共通のレイアウト**
 
+# yield
+`yield`は共通プログラムと個別プログラムで分割してコーディングするために使用するRubyのメソッド。
 
-集約する
-
-# このyield renderで書いてもいいよね？
-出来ることは出来る。
-ただ取り込むビューの情報が必要でrenderの引数を動的に変える必要があり、それでは共通で使用されるレイアウトテンプレートとしての役割が果たせなくなる。
-
-# レイアウトを利用することのメリット
-- サイトデザインを変更する場合もレイアウトだけを変更すれば良い
-- 個別のテンプレートにはページ固有のコンテンツだけを記述すれば良い
-- サイト構成（ナビゲーションなど）に一貫性ができるため、使い勝手も向上する
-
-# yieldとは
-指定が無くても取り込むメソッド
-コントローラーっで処理されたビューを読み込む
-renderに置き換えるとrenderの指定先をアクション名のビューに合わせて動的に変更する必要が出てきて、手間になる。
-これでは
+共通レイアウト(application.html.erb)のbodyタグ内にある `yield` の部分に、コントローラーで処理された (アクション名).html.erbの個別レイアウトが埋め込まれる。
 
 
 # render
-部分テンプレート
-一部分だけ使う
-変数のやり取り
+view内ではパーシャル(部分テンプレート、個別テンプレート)に対して用いられる。
+```erb
+<%= render "form" %>
+```
+レンダリングされるビュー内に置かれている上のコードは、その場所で_form.html.erbという名前のファイルをレンダリングする。
+(パーシャルファイル名の冒頭にはアンダースコア（_）が付いていることに注意)
+主な使われ方はheader、footerやformなどの使いまわし。
+これらはサイトでページが異なっても一貫した描画が行われることが多いのでrenderメソッドで部分テンプレートを使いまわす。
+
+# yieldの部分renderで書ける？
+書けるが、柔軟性が失われる。
+renderでの指定するファイル名はアンダースコア始まりなのに対し、アクションで指定するビューファイルのファイル名はアクション名に一致する必要がある。
+さらにrenderの引数もアクションのページ指定ごとに動的に変える必要も出てくるので難しい。
+なのでここでrenderを使うのではなくコントローラーで処理されたものを指定なしに埋め込むyieldを使った方がスマート。
+
+# まとめ
+ビュー内での使われ方として
+- yieldはレンダリングされているビューファイルを共通レイアウトの中に埋め込むのに使う。
+- renderはパーシャルをレンダリングするために使う。
+
+[個々のページの図1,2が分かりやすいです](https://zenn.dev/peishim/articles/49822b95ba6674)
+
+# 参考文献
+[メソッド呼び出し(super・ブロック付き・yield - Ruby 3.2 リファレンスマニュアル)](https://docs.ruby-lang.org/ja/latest/doc/spec=2fcall.html#yield)
+[レイアウトとレンダリング - Railsガイド](https://railsguides.jp/layouts_and_rendering.html#yield%E3%82%92%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B)
+[yieldについて|Ruby on Railsの基礎を学ぼう！ - Techpit](https://www.techpit.jp/courses/61/curriculums/65/sections/527/parts/1816)
+[【Rails入門】yieldとcontent_forを使ってページ毎にタイトルを変更](https://www.sejuku.net/blog/75657)
+[yield -Railsドキュメント](https://railsdoc.com/page/yield)
+[render - Railsドキュメント](https://railsdoc.com/page/render)
+[Railsのviewとlayoutの評価順についてコードを読んで納得した](https://blog.freedom-man.com/rails-view-layout)
+[【Rails】View(ビュー)の構成ファイルを読み解く](https://zenn.dev/peishim/articles/49822b95ba6674)
