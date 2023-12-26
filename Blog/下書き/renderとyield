@@ -1,0 +1,47 @@
+Railsチュートリアルでまずyieldと出会うのはapplication.html.erbの中
+
+```erb:application.html.erb
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <%= yield %> # ←ここ！
+  </body>
+</html>
+```
+
+# そもそもapplication.erbとは？
+Railsのビューは、共通部分になるレイアウトテンプレート(単にレイアウト)と、各ページ固有のコンテンツを表す個別テンプレートの二種類がある
+application.erbはコントローラ固有のレイアウトが見つからない場合、**デフォルトで使用される共通のレイアウト**
+
+
+集約する
+
+# このyield renderで書いてもいいよね？
+出来ることは出来る。
+ただ取り込むビューの情報が必要でrenderの引数を動的に変える必要があり、それでは共通で使用されるレイアウトテンプレートとしての役割が果たせなくなる。
+
+# レイアウトを利用することのメリット
+- サイトデザインを変更する場合もレイアウトだけを変更すれば良い
+- 個別のテンプレートにはページ固有のコンテンツだけを記述すれば良い
+- サイト構成（ナビゲーションなど）に一貫性ができるため、使い勝手も向上する
+
+# yieldとは
+指定が無くても取り込むメソッド
+コントローラーっで処理されたビューを読み込む
+renderに置き換えるとrenderの指定先をアクション名のビューに合わせて動的に変更する必要が出てきて、手間になる。
+これでは
+
+
+# render
+部分テンプレート
+一部分だけ使う
+変数のやり取り
