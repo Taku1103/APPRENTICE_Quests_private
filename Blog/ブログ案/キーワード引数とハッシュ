@@ -1,0 +1,248 @@
+# はじめに
+RailsでRubyのコードを触っていたときのある日、今まで触っていたコードのメソッドを見て
+あれ？これってずっとハッシュを引数として渡していたと思ってたけどキーワード引数なのでは？という疑問が生じ、その疑問を解消するために色々調べたので記事にしてまとめてみました。
+
+結論を先に書くと
+# 結論:Rails側(定義元)でなんとかしてくれてるからハッシュかキーワード引数か気にしなくていい
+
+# 実際にRailsで書いていたコード
+以下のコード読みほぐしていく。(turboの説明は省略)
+```ruby:
+redirect_to root_url, status: :see_other
+# controller内に書いていたredirect
+
+validates :title,  presence: true, length: { maximum: 100 }
+# model内に書いていたvalidation
+
+link_to '削除', todo_path(todo),  data: { turbo_method: :delete , turbo_confirm: '本当に削除していいですか?' }, class: 'delete' 
+# todoアプリのview内の削除ボタンに書いていたコード
+```
+
+
+# ハッシュ
+key（キー）とvalue(値)の組み合わせでデータを管理する**オブジェクト、データ構造**のこと。
+｛｝で括られる。
+```ruby
+currencies = {"japan" => "yen", "us" => "dollar"}
+```
+ハッシュのキーは文字列よりも[シンボルの方が特性上適している](https://docs.ruby-lang.org/ja/latest/class/Symbol.html)のでよく使われる。
+シンボルがキーの場合は=>を用いずに `シンボル:値`という記法でハッシュが作成できる。
+
+```ruby
+currencies = {japan: "yen", us: "dollar"}
+```
+
+この時コロンの位置が左から右に変わることに注意(後置コロン)。
+
+# キーワード引数
+キーワード引数とは、メソッドの引数にキーワードとなる名前を付けて、順序に関係なく対応する**引数の記述方法**のこと。
+ハッシュと同じような記法で書かれるため混同しやすい。
+
+書き方
+```ruby
+def メソッド名(キーワード引数1: デフォルト値1, キーワード引数2:デフォルト値2)
+    # メソッド処理
+end
+```
+ex)　ハンバーガーと飲み物とポテトを買うメソッド(キーワード引数使っていない)
+```ruby:ex1 no keyword
+def buy_burger(menu, drink, potato)
+  # menu のハンバーガー購入
+  if drink
+    # drink = true ならドリンク購入
+  end
+  if potato
+    # potato = true ならポテト購入
+  end
+end
+```
+メソッド定義を見た後だとこのメソッドがどういう引数を受け取るかわかりやすいが、メソッドの呼び出し側が離れて記述された場合、以下のようになり可読性が下がる。
+
+```ruby
+buy_burger("cheese_burger", true, false) # あれ？何がtrue,falseなんだ？
+```
+こういった問題を避けるためにキーワード引数が使われる。
+以下のdrink, potatoがキーワード引数。
+
+```ruby:ex2 keyword
+def buy_burger(menu, drink: true, potato: true) 
+  # 略
+end
+```
+メソッド呼び出し側
+```ruby
+buy_burger("chicken", drink: true, potato: false) # あっドリンクは買うけどポテトは買わないのか
+```
+こうすることで呼び出し側の可読性を高めることが出来る。
+
+### デフォルト値
+キーワード引数にはデフォルト値が設定されているので、**引数を省略することが可能**。
+```ruby
+buy_burger("bigburger") # ex2 デフォルトでdrinkもpotatoもtrueが使われる
+```
+またデフォルト値は**定義時に省略可能、しかしその際呼び出し時に省略不可**。
+```ruby
+def buy_burger(menu, drink: , potato: ) 
+  # 略
+end
+
+buy_burger("cheese", drink: true, potato: false) # ex2と同じように使える
+buy_burger("bigburger") # => ArgumentError
+```
+
+
+### 位置に依存しない
+キーワード引数は呼び出し時に自由に順番を入れ替え可能(キーワード引数間)
+```ruby
+buy_burger("fish", potato: false, drink: true) # drinkとpotatoの位置入れ替え
+```
+
+
+
+# ということは？
+```ruby
+link_to '削除', todo_path(todo),  data: { turbo_method: :delete , turbo_confirm: '本当に削除していいですか?' }, class: 'delete' 
+```
+Rubyのルールでメソッドの()は省略可能なので
+この上のコードは( ) をつけて
+```ruby
+link_to ('削除', todo_path(todo),  data: { turbo_method: :delete , turbo_confirm: '本当に削除していいですか?' }, class: 'delete')
+```
+となり第一引数にリンク名として'削除'が、第二引数にURLヘルパーメソッド指定、
+`data:` がキーワード引数でその値にハッシュとして`{ turbo_method: :delete , turbo_confirm: '本当に削除していいですか?' }`が入り
+`class:` もキーワード引数で値が `'delete'`
+
+ということで一見落着...と思いきや
+Rubyの省略のルールで 
+<br>
+ **最後の引数がハッシュだったらハッシュリテラルの{}を省略出来る**
+
+というものがあるので
+
+```ruby
+link_to ('削除', todo_path(todo),  {data: { turbo_method: :delete , turbo_confirm: '本当に削除していいですか?' }, class: 'delete'})
+```
+として最後の引数をハッシュと考えることも出来る。
+<br>
+<br>
+あれ？これって結局どうやって見分ければいいんだ...?
+
+
+
+# キーワード引数 or 引数に{}が省略されたハッシュの判別
+
+Railsのメソッド定義元を確認する必要がある。
+
+
+
+# 実際にRailsのソースコードからメソッドを見てみる
+- [redirect_toメソッド](https://railsdoc.com/page/redirect_to) 【[GitHubソースコード](https://github.com/rails/rails/blob/984c3ef2775781d47efa9f541ce570daa2434a80/actionpack/lib/action_controller/metal/redirecting.rb#L82)】
+
+> def redirect_to(options = {}, response_options = {})
+
+redirect_toメソッドの引数は通常のハッシュ引数であり、optionsとresponse_optionsがそれぞれデフォルト値なしでハッシュを受け取るように宣言されている。
+
+- [validatesメソッド](https://railsdoc.com/page/validates)【[GitHubソースコード](https://github.com/rails/rails/blob/984c3ef2775781d47efa9f541ce570daa2434a80/activemodel/lib/active_model/validations/validates.rb#L106)】
+> def validates(*attributes)
+
+*attributesは[可変長引数](https://magazine.techacademy.jp/magazine/19841)を受け取り、その後の引数は通常の引数として扱われている。
+また、defaultsは通常の引数で、attributes.extract_options!によってオプションのハッシュが取り出されている。
+
+- [link_toメソッド](https://railsdoc.com/page/link_to) 【[GitHubソースコード](https://github.com/rails/rails/blob/984c3ef2775781d47efa9f541ce570daa2434a80/actionview/lib/action_view/helpers/url_helper.rb#L209)】
+> def link_to(name = nil, options = nil, html_options = nil, &block)
+
+options（リンクのパスやオプション）
+この引数はハッシュであり、通常はリンク先のURLやコントローラーアクションなどが指定される。
+
+Railsのこれらのメソッドはハッシュとして引数を受け取っている。
+<br>
+<br>
+
+しかし比較的新しいRailsメソッドを見てみると
+
+[insert_all(6.0~)](https://railsdoc.com/page/insert_all) 【[GitHubソースコード](https://github.com/rails/rails/blob/984c3ef2775781d47efa9f541ce570daa2434a80/activerecord/lib/active_record/persistence.rb#L145)】
+>  def insert_all(attributes, returning: nil, unique_by: nil, record_timestamps: nil)
+
+このようにキーワード引数が定義されている。
+
+# 歴史的経緯
+### Ruby2.0以前
+メソッドのキーワード引数はRuby2.0から導入された機能。
+それ以前はメソッドの定義で引数としてハッシュそのものを受け取れるようにしていた。
+**擬似キーワード引数**と呼ばれるテクニックで、**ハッシュをキーワード引数っぽく**扱っていた。
+```ruby:擬似キーワード引数
+def buy_burger(menu, options = {})
+  drink = options[:drink]
+  potato = options[:potato]
+end
+
+buy_burger("cheese", drink: true, potato: true) 
+```
+これは後方互換性維持のためにRuby3.0でも有効だが新しいコードで使うことは非推奨。
+
+### Ruby2.x
+Ruby2.0~2.7はハッシュを引数に渡すとそれが自動的にキーワード引数に自動変換されていた。
+
+[Ruby 2.7: ハッシュからキーワード引数への自動変換が非推奨に（翻訳）](https://techracho.bpsinc.jp/hachi8833/2023_05_18/82588)
+しかしこの互換性は多くの実に多くのバグやエッジケースの温床となっていたよう。
+Ruby3.0からは、自動変換が行われず、エラーとなる仕様に変更になった。
+
+### 引数の歴史的流れ
+ハッシュをキーワード引数として擬似的にみなすテクニックが存在(2.0以前)
+→ハッシュとキーワード引数どちらでもokで自動変換(2.x)
+→ハッシュとキーワード引数の分離(3.0~)
+
+というRubyのキーワード引数の歴史の流れがあり、
+Railsの新しいメソッド定義で引数の受けとり方もその流れに従って変化してきているのかもしれないと勝手に推測。
+
+# 結局のところ
+Rails内部(定義側)で引数がハッシュかキーワード引数か を決めてくれているので、コーディングする上で呼び出し側で記法自体は変化しない。
+なのでRails初心者の自分にとってはそこまで気にすることではないという結論に至った。
+
+# まとめ
+- メソッド定義で引数がハッシュかキーワード引数か決まる
+- Rubyのハッシュとキーワード引数には一体化から分離の歴史的経緯がある
+- Rails内部で使い分けの判断はしてくれているので呼び出し側でコーディングしている分には気にする必要はない
+
+# 感想
+ふとした疑問を調べただけでRubyの歴史が垣間見れて興味深かったです。引数の扱いも曖昧だったところも明確になった気がします。
+Railsチュートリアルでキーワード引数についてではなく、ハッシュの{}の省略についてしっかり書かれていた理由も納得出来ました。
+間違っていたら教えてください。
+
+
+
+# 参考文献
+[チェリー本 5.4, 5.6節](https://www.amazon.co.jp/%E3%83%97%E3%83%AD%E3%82%92%E7%9B%AE%E6%8C%87%E3%81%99%E4%BA%BA%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AERuby%E5%85%A5%E9%96%80-%E8%A8%80%E8%AA%9E%E4%BB%95%E6%A7%98%E3%81%8B%E3%82%89%E3%83%86%E3%82%B9%E3%83%88%E9%A7%86%E5%8B%95%E9%96%8B%E7%99%BA%E3%83%BB%E3%83%87%E3%83%90%E3%83%83%E3%82%B0%E6%8A%80%E6%B3%95%E3%81%BE%E3%81%A7-Software-Design-plus%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/dp/4774193976)
+[Ruby 2.7: ハッシュからキーワード引数への自動変換が非推奨に（翻訳）](https://techracho.bpsinc.jp/hachi8833/2023_05_18/82588)
+[Rubyの:(コロン)の種類](https://qiita.com/mdgwshk2021/items/5517afe1195d713b6f70)
+[Udemy Ruby on Rails でたくさん出てくる「 : (コロン)」← これ理解できてる！？](https://www.udemy.com/course/ruby-on-rails-c/)
+[Rails チュートリアル 第4章 ハッシュとシンボル](https://railstutorial.jp/chapters/rails_flavored_ruby?version=7.0#sec-hashes_and_symbols)
+[Ruby初学者が戸惑いやすい文法を、例を交えて噛み砕いてみる](https://qiita.com/shinkuFencer/items/045ae58d2192ee3b1406)
+[Ruby の引数の種類をまとめてみた](https://secret-garden.hatenablog.com/entry/2022/03/11/210246)
+[nilガード](https://www.sejuku.net/blog/19044#index_id10)
+
+
+# キーワード引数とは
+値を渡す時に名前を指定できる引数
+そしてキーワード引数には以下の特徴があります。
+
+# 前置きと後置きシンボル
+
+- 引数に見出し(タイトルをつける事ができる)
+- キーワード引数は順番が入れ替わってもOK
+- 通常の引数と一緒に使える
+
+キーワード引数は引数がどんなのか説明してくれているだけ
+省略可能
+
+シンボルコロン後置
+キーワード引き
+ハッシュでキーになるとき
+
+文字列は文字列自体がデータとして扱われますが、シンボルそのものは値を持ちません。
+
+
+オプショナル引数 (optional parameter)
+デフォルト値を設定して定義するキーワード引数
+必須引数とは違いメソッドに値を渡さなくもエラーにならない
+その場合はデフォルト値が変数に代入される
