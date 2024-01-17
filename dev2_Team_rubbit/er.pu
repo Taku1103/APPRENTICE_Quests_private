@@ -1,0 +1,102 @@
+' alt+DでER図表示
+
+@startuml shortcut_quiz
+
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+
+entity "ver 0.1.0" {
+
+}
+
+entity "users" {
+    *user_id <generated> : INT
+    --
+    *name: String
+    *token(?) : String
+}
+
+entity "users_follow_broadcasters" {
+    *follow_broadcaster_id :Integer(API取得はstr)
+    --
+    *follow_broadcaster_login : String
+    *follow_broadcaster_name : String
+    *followed_at : String
+
+    *user_id <FK>
+}
+
+
+entity "playlists" {
+    *playlist_id <generated> : Integer
+    --
+    *user_id <FK>
+    *favorite_count : Integer
+    *created_at : date
+    *update_at : date
+}
+
+
+entity "clips" {
+    *clip_id <generated> : Integer(LIB上管理ID)
+    --
+以下API取得情報
+    *tw_id : String (Twitch上管理ID)
+    *url : String
+    *embed_url : String
+    *broadcaster_id : String
+    *broadcaster_name : String
+    *creator_id : String
+    *creator_name : String
+    *video_id : Integer
+    *language : String
+    *title : String
+    *view_count : Integer
+    *created_at : String
+    *duration : float
+    *vod_offset : Integer
+    *is_featured : Boolean
+    *pagination : Object
+}
+
+entity  "playlists_clips" {
+    *playlist_id <FK>
+    *clip_id <FK>
+    --
+    *add_datetime : date
+}
+entity "user_favorite_playlists" {
+    *user_id <FK>
+    *playlist_id <FK>
+    --
+    *favorite_datetime : date
+}
+
+entity "playlists_tags" {
+    *playlist_id <FK>
+    --
+    *tag_id <FK>
+}
+
+entity "tags" {
+    *tag_id <generated>
+    *tag_name : String
+}
+
+users||--|{playlists
+playlists||--|{playlists_clips
+playlists_clips}|--||clips
+users||--|{users_follow_broadcasters
+users||--|{user_favorite_playlists
+user_favorite_playlists}|--||playlists
+
+playlists||--|{playlists_tags
+playlists_tags}|--||tags
+
+
+@enduml
+
