@@ -9,7 +9,7 @@ hide circle
 skinparam linetype ortho
 
 
-entity "ver 0.1.0" {
+entity "ver 0.2.0" {
 
 }
 
@@ -67,12 +67,14 @@ entity  "playlists_clips" {
     *playlist_id <FK>
     *clip_id <FK>
     --
+    *order_index : Integer
     *add_datetime : date
 }
 entity "user_favorite_playlists" {
     *user_id <FK>
     *playlist_id <FK>
     --
+    *order_index : Integer
     *favorite_datetime : date
 }
 
