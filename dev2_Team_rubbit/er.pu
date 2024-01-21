@@ -9,25 +9,16 @@ hide circle
 skinparam linetype ortho
 
 
-entity "ver 0.2.0" {
+entity "ver 0.3.0" {
 
 }
 
 entity "users" {
-    *user_id <generated> : INT
+    *user_id (?)<generated> : Integer
     --
     *name: String
     *token(?) : String
-}
-
-entity "users_follow_broadcasters" {
-    *follow_broadcaster_id :Integer(API取得はstr)
-    --
-    *follow_broadcaster_login : String
-    *follow_broadcaster_name : String
-    *followed_at : String
-
-    *user_id <FK>
+    *API取得情報 省略
 }
 
 
@@ -35,9 +26,10 @@ entity "playlists" {
     *playlist_id <generated> : Integer
     --
     *user_id <FK>
+    *name : String
     *favorite_count : Integer
-    *created_at : date
-    *update_at : date
+    *created_at : Date
+    *update_at : Date
 }
 
 
@@ -63,14 +55,18 @@ entity "clips" {
     *pagination : Object
 }
 
-entity  "playlists_clips" {
+entity  "playlist_clips" {
+    *add_id <generated> : Integer
+    --
     *playlist_id <FK>
     *clip_id <FK>
     --
     *order_index : Integer
-    *add_datetime : date
+    *add_datetime : Date
 }
 entity "user_favorite_playlists" {
+    *favorite_id <generated> : Integer
+    --
     *user_id <FK>
     *playlist_id <FK>
     --
@@ -78,26 +74,38 @@ entity "user_favorite_playlists" {
     *favorite_datetime : date
 }
 
-entity "playlists_tags" {
-    *playlist_id <FK>
-    --
-    *tag_id <FK>
-}
 
-entity "tags" {
-    *tag_id <generated>
-    *tag_name : String
-}
+' entity "users_follow_broadcasters" {
+'     *follow_broadcaster_id :Integer(API取得はstr)
+'     --
+'     *follow_broadcaster_login : String
+'     *follow_broadcaster_name : String
+'     *followed_at : String
+
+'     *user_id <FK>
+' }
+
+
+' entity "playlists_tags" {
+'     *playlist_id <FK>
+'     --
+'     *tag_id <FK>
+' }
+
+' entity "tags" {
+'     *tag_id <generated>
+'     *tag_name : String
+' }
 
 users||--|{playlists
-playlists||--|{playlists_clips
-playlists_clips}|--||clips
-users||--|{users_follow_broadcasters
+playlists||--|{playlist_clips
+playlist_clips}|--||clips
 users||--|{user_favorite_playlists
 user_favorite_playlists}|--||playlists
 
-playlists||--|{playlists_tags
-playlists_tags}|--||tags
+' users||--|{users_follow_broadcasters
+' playlists||--|{playlists_tags
+' playlists_tags}|--||tags
 
 
 @enduml
