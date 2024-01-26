@@ -9,7 +9,7 @@ hide circle
 skinparam linetype ortho
 
 
-entity "ver 0.3.0" {
+entity "ver 0.4.0" {
 
 }
 
@@ -28,6 +28,7 @@ entity "playlists" {
     *user_id <FK>
     *name : String
     *favorite_count : Integer
+    *published :Boolean
     *created_at : Date
     *update_at : Date
 }
@@ -44,7 +45,7 @@ entity "clips" {
     *broadcaster_name : String
     *creator_id : String
     *creator_name : String
-    *video_id : Integer
+    *video_id : String
     *language : String
     *title : String
     *view_count : Integer
@@ -52,7 +53,9 @@ entity "clips" {
     *duration : float
     *vod_offset : Integer
     *is_featured : Boolean
-    *pagination : Object
+    *game_id : String
+    *game_title : String (別でAPI叩く必要有)
+    ' *pagination : Object
 }
 
 entity  "playlist_clips" {
@@ -71,8 +74,31 @@ entity "user_favorite_playlists" {
     *playlist_id <FK>
     --
     *order_index : Integer
-    *favorite_datetime : date
+    *favorite_datetime : Date
 }
+
+entity "daily_highlight_playlists" {
+    *daily_id <generated> : Integer : Integer
+    --
+    *playlist_id <FK>
+    *created_at : Date
+    *period : (Date~Date)?
+}
+entity "weekly_highlight_playlists" {
+    *weekly_id <generated> : Integer : Integer
+    --
+    *playlist_id <FK>
+    *created_at : Date
+    *period : (Date~Date)?
+}
+entity "monthly_highlight_playlists" {
+    *monthly_id <generated> : Integer : Integer
+    --
+    *playlist_id <FK>
+    *created_at : Date
+    *period : (Date~Date)?
+}
+
 
 
 ' entity "users_follow_broadcasters" {
@@ -102,6 +128,14 @@ playlists||--|{playlist_clips
 playlist_clips}|--||clips
 users||--|{user_favorite_playlists
 user_favorite_playlists}|--||playlists
+
+daily_highlight_playlists}|--||playlists
+weekly_highlight_playlists}|--||playlists
+monthly_highlight_playlists}|--||playlists
+
+
+
+
 
 ' users||--|{users_follow_broadcasters
 ' playlists||--|{playlists_tags
