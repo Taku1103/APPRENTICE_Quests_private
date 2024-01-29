@@ -9,36 +9,41 @@ hide circle
 skinparam linetype ortho
 
 
-entity "ver 0.4.0" {
+entity "ver 0.5.0" {
 
 }
 
 entity "users" {
-    *user_id (?)<generated> : Integer
+    *id <generated> : Integer
     --
-    *name: String
-    *token(?) : String
-    *API取得情報 省略
+    *id_on_twitch: String
+    *login_name : String
+    *display_name: String
+    *profile_image_url: String
+    *user_created_at: String
+
+    *created_at : datetime
+    *update_at : datetime
 }
 
 
 entity "playlists" {
-    *playlist_id <generated> : Integer
+    *id <generated> : Integer
     --
     *user_id <FK>
     *name : String
     *favorite_count : Integer
     *published :Boolean
+
     *created_at : Date
     *update_at : Date
 }
 
 
 entity "clips" {
-    *clip_id <generated> : Integer(LIB上管理ID)
+    *id <generated> : Integer(LIB上管理ID)
     --
-以下API取得情報
-    *tw_id : String (Twitch上管理ID)
+    *id_on_twitch : String (Twitch上管理ID)
     *url : String
     *embed_url : String
     *broadcaster_id : String
@@ -46,57 +51,73 @@ entity "clips" {
     *creator_id : String
     *creator_name : String
     *video_id : String
+    *game_id : String
     *language : String
     *title : String
     *view_count : Integer
-    *created_at : String
+    *clip_created_at : String
+    *thumbnail_url: String
     *duration : float
     *vod_offset : Integer
     *is_featured : Boolean
-    *game_id : String
     *game_title : String (別でAPI叩く必要有)
-    ' *pagination : Object
+
+    *created_at : datetime
+    *update_at : datetime
 }
 
+
 entity  "playlist_clips" {
-    *add_id <generated> : Integer
+    *id <generated> : Integer
     --
     *playlist_id <FK>
     *clip_id <FK>
     --
     *order_index : Integer
-    *add_datetime : Date
+
+    *created_at : datetime
+    *update_at : datetime
 }
 entity "user_favorite_playlists" {
-    *favorite_id <generated> : Integer
+    *id <generated> : Integer
     --
     *user_id <FK>
     *playlist_id <FK>
     --
     *order_index : Integer
-    *favorite_datetime : Date
+
+    *created_at : datetime
+    *update_at : datetime
 }
 
 entity "daily_highlight_playlists" {
-    *daily_id <generated> : Integer : Integer
+    *id <generated> : Integer
     --
     *playlist_id <FK>
-    *created_at : Date
-    *period : (Date~Date)?
+    *start_date : Date
+
+    *created_at : datetime
+    *update_at : datetime
 }
 entity "weekly_highlight_playlists" {
-    *weekly_id <generated> : Integer : Integer
+    *id <generated> : Integer
     --
     *playlist_id <FK>
-    *created_at : Date
-    *period : (Date~Date)?
+    *start_date : Date
+    *end_date : Date
+
+    *created_at : datetime
+    *update_at : datetime
 }
 entity "monthly_highlight_playlists" {
-    *monthly_id <generated> : Integer : Integer
+    *id <generated> : Integer
     --
     *playlist_id <FK>
-    *created_at : Date
-    *period : (Date~Date)?
+    *start_date : Date
+    *end_date : Date
+
+    *created_at : datetime
+    *update_at : datetime
 }
 
 
@@ -144,3 +165,26 @@ monthly_highlight_playlists}|--||playlists
 
 @enduml
 
+
+
+clip
+    *clip_id <generated> : Integer(LIB上管理ID)
+    --
+以下API取得情報
+    *id_on_twtich : String (Twitch上管理ID)
+    *url : String
+    *embed_url : String
+    *broadcaster_id : String
+    *broadcaster_name : String
+    *creator_id : String
+    *creator_name : String
+    *video_id : String
+    *language : String
+    *title : String
+    *view_count : Integer
+    *created_at : String
+    *duration : float
+    *vod_offset : Integer
+    *is_featured : Boolean
+    *game_id : String
+    *game_title : String (別でAPI叩く必要有)
