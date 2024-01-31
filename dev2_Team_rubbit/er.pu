@@ -9,7 +9,7 @@ hide circle
 skinparam linetype ortho
 
 
-entity "ver 0.5.0" {
+entity "ver 0.6.0" {
 
 }
 
@@ -23,7 +23,7 @@ entity "users" {
     *user_created_at: String
 
     *created_at : datetime
-    *update_at : datetime
+    *updated_at : datetime
 }
 
 
@@ -36,7 +36,7 @@ entity "playlists" {
     *published :Boolean
 
     *created_at : Date
-    *update_at : Date
+    *updated_at : Date
 }
 
 
@@ -55,7 +55,7 @@ entity "clips" {
     *language : String
     *title : String
     *view_count : Integer
-    *clip_created_at : String
+    *clip_created_at : Date
     *thumbnail_url: String
     *duration : float
     *vod_offset : Integer
@@ -63,7 +63,7 @@ entity "clips" {
     *game_title : String (別でAPI叩く必要有)
 
     *created_at : datetime
-    *update_at : datetime
+    *updated_at : datetime
 }
 
 
@@ -76,7 +76,7 @@ entity  "playlist_clips" {
     *order_index : Integer
 
     *created_at : datetime
-    *update_at : datetime
+    *updated_at : datetime
 }
 entity "user_favorite_playlists" {
     *id <generated> : Integer
@@ -87,7 +87,7 @@ entity "user_favorite_playlists" {
     *order_index : Integer
 
     *created_at : datetime
-    *update_at : datetime
+    *updated_at : datetime
 }
 
 entity "daily_highlight_playlists" {
@@ -97,7 +97,7 @@ entity "daily_highlight_playlists" {
     *start_date : Date
 
     *created_at : datetime
-    *update_at : datetime
+    *updated_at : datetime
 }
 entity "weekly_highlight_playlists" {
     *id <generated> : Integer
@@ -107,7 +107,7 @@ entity "weekly_highlight_playlists" {
     *end_date : Date
 
     *created_at : datetime
-    *update_at : datetime
+    *updated_at : datetime
 }
 entity "monthly_highlight_playlists" {
     *id <generated> : Integer
@@ -117,7 +117,7 @@ entity "monthly_highlight_playlists" {
     *end_date : Date
 
     *created_at : datetime
-    *update_at : datetime
+    *updated_at : datetime
 }
 
 
@@ -131,10 +131,6 @@ user_favorite_playlists}|--||playlists
 daily_highlight_playlists}|--||playlists
 weekly_highlight_playlists}|--||playlists
 monthly_highlight_playlists}|--||playlists
-
-
-
-
 
 
 @enduml
