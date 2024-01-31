@@ -122,6 +122,24 @@ entity "monthly_highlight_playlists" {
 
 
 
+users||--|{playlists
+playlists||--|{playlist_clips
+playlist_clips}|--||clips
+users||--|{user_favorite_playlists
+user_favorite_playlists}|--||playlists
+
+daily_highlight_playlists}|--||playlists
+weekly_highlight_playlists}|--||playlists
+monthly_highlight_playlists}|--||playlists
+
+
+
+
+
+
+@enduml
+
+
 ' entity "users_follow_broadcasters" {
 '     *follow_broadcaster_id :Integer(API取得はstr)
 '     --
@@ -144,27 +162,9 @@ entity "monthly_highlight_playlists" {
 '     *tag_name : String
 ' }
 
-users||--|{playlists
-playlists||--|{playlist_clips
-playlist_clips}|--||clips
-users||--|{user_favorite_playlists
-user_favorite_playlists}|--||playlists
-
-daily_highlight_playlists}|--||playlists
-weekly_highlight_playlists}|--||playlists
-monthly_highlight_playlists}|--||playlists
-
-
-
-
-
 ' users||--|{users_follow_broadcasters
 ' playlists||--|{playlists_tags
 ' playlists_tags}|--||tags
-
-
-@enduml
-
 
 
 clip
