@@ -85,3 +85,82 @@ VALUES
     '2024-01-30 12:34:56',
     '2024-01-30 12:34:56'
   );
+
+games
+INSERT INTO
+  games (game_id, game_title, created_at, updated_at)
+VALUES
+  (
+    32982,
+    "GTA5",
+    '2024-01-30 12:34:56',
+    '2024-01-30 12:34:56'
+  );
+
+broadcasters
+INSERT INTO
+  broadcasters (
+    broadcaster_id,
+    profile_image_url,
+    created_at,
+    updated_at
+  )
+VALUES
+  (
+    190063430,
+    "https://static-cdn.jtvnw.net/jtv_user_pictures/8a6381c7-d0c0-4576-b179-38bd5ce1d6af-profile_image-300x300.png",
+    '2024-01-30 12:34:56',
+    '2024-01-30 12:34:56'
+  );
+
+/* user_favorite_playlists */
+INSERT INTO
+  user_favorite_playlists (
+    user_id,
+    playlist_id,
+    order_index,
+    created_at,
+    updated_at
+  )
+VALUES
+  (
+    4,
+    4,
+    1,
+    '2024-01-30 12:34:56',
+    '2024-01-30 12:34:56'
+  );
+
+INSERT INTO
+  user_favorite_playlists (
+    user_id,
+    playlist_id,
+    order_index,
+    created_at,
+    updated_at
+  )
+VALUES
+  (
+    8,
+    4,
+    1,
+    '2024-01-30 12:34:56',
+    '2024-01-30 12:34:56'
+  );
+
+INSERT INTO
+  user_favorite_playlists (
+    user_id,
+    playlist_id,
+    order_index,
+    created_at,
+    updated_at
+  )
+VALUES
+  (
+    9,
+    4,
+    1,
+    '2024-01-30 12:34:56',
+    '2024-01-30 12:34:56'
+  );

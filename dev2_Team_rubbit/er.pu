@@ -9,7 +9,7 @@ hide circle
 skinparam linetype ortho
 
 
-entity "ver 0.7.0" {
+entity "ver 0.8.2" {
 
 }
 
@@ -32,7 +32,6 @@ entity "playlists" {
     --
     *user_id <FK>
     *name : String
-    *favorite_count : Integer
     *published :Boolean
 
     *created_at : Date
@@ -51,7 +50,7 @@ entity "clips" {
     *creator_id : String
     *creator_name : String
     *video_id : String
-    *game_id : String
+    *game_id : String (Twitch上管理ID)
     *language : String
     *title : String
     *view_count : Integer
@@ -90,6 +89,7 @@ entity "user_favorite_playlists" {
 }
 
 entity "daily_highlight_playlists" {
+    デモだと不要
     *id <generated> : Integer
     --
     *playlist_id <FK>
@@ -99,6 +99,7 @@ entity "daily_highlight_playlists" {
     *updated_at : datetime
 }
 entity "weekly_highlight_playlists" {
+    デモだと不要
     *id <generated> : Integer
     --
     *playlist_id <FK>
@@ -109,6 +110,7 @@ entity "weekly_highlight_playlists" {
     *updated_at : datetime
 }
 entity "monthly_highlight_playlists" {
+    デモだと不要
     *id <generated> : Integer
     --
     *playlist_id <FK>
@@ -120,11 +122,26 @@ entity "monthly_highlight_playlists" {
 }
 
 entity "games" {
-  *id <generated> : Integer
+  *id <generated> : Integer (LIB上管理ID)
   --
-  *game_id : Integer
+  *game_id : Integer (Twitch上管理ID)
   *game_title :String
+  *game_thumbnail_url: String
 }
+
+entity "broadcasters"{
+  *id <generated> : Integer (LIB上管理ID)
+  --
+  *broadcaster_id : Integer (Twitch上管理ID)
+  *profile_image_url : String
+  *(broadcaster_name)*いらない
+}
+
+' entity  "follow_broadcasters"{
+'   *user_id <FK>
+'   *broadcaster_id <FK>
+' }
+
 
 users||--|{playlists
 playlists||--|{playlist_clips
@@ -136,7 +153,13 @@ daily_highlight_playlists}|--||playlists
 weekly_highlight_playlists}|--||playlists
 monthly_highlight_playlists}|--||playlists
 
-games}|--||clips
+games||--|{clips
+
+broadcasters||--|{clips
+
+' users||--|{follow_broadcasters
+' follow_broadcasters}|--||broadcasters
+
 
 @enduml
 
