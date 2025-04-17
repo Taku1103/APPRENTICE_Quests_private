@@ -1,2 +1,1 @@
-# このリポジトリはAPPRENTCE_Questファイルの個人的管理リポジトリになりました
-Ruby_Quest用のリポジトリは[こちら](https://github.com/Taku1103/APPRENTICE_Quest_Ruby_new)です
+# このリポジトリはエンジニア育成プログラムでの日報、ノートを整理したリポジトリです
